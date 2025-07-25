@@ -16,7 +16,6 @@ export type Actions = {
 export interface CustomBottomSheetParams {
   bottomSheetRef: RefObject<BottomSheet | null>;
   postComments: Comment[];
-  currentPost: UserAPI | undefined;
   sendComment: () => void;
   text: string;
   setText: Dispatch<SetStateAction<string>>;

@@ -3,7 +3,7 @@ import { FlatList, Image, SafeAreaView, StyleSheet, View } from 'react-native';
 import React from 'react';
 import moment from 'moment';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Text } from 'react-native-paper';
+import { IconButton, Text } from 'react-native-paper';
 
 import 'moment/locale/es';
 
@@ -24,7 +24,6 @@ const HomeScreen = () => {
     setIdPost,
     toggleSave,
     postComments,
-    currentPost,
     sendComment,
     text,
     setText,
@@ -49,16 +48,26 @@ const HomeScreen = () => {
                 return (
                   <View key={item.id} style={{ margin: 10 }}>
                     <View style={styles.headerContainer}>
-                      <Image
-                        source={require('../../assets/image/userImage.png')}
-                        //   source={{ uri: item.image }}
-                        style={styles.smallImage}
-                        resizeMode="cover"
-                      />
-                      <View>
-                        <Text variant="labelLarge">{item.name}</Text>
-                        <Text>{item.location}</Text>
+                      <View style={styles.headerUserInfo}>
+                        <Image
+                          source={require('../../assets/image/userImage.png')}
+                          //   source={{ uri: item.image }}
+                          style={styles.smallImage}
+                          resizeMode="cover"
+                        />
+                        <View>
+                          <Text variant="labelLarge">{item.name}</Text>
+                          <Text>{item.location}</Text>
+                        </View>
                       </View>
+                      <IconButton
+                        icon={'dots-vertical'}
+                        iconColor={'#000'}
+                        size={23}
+                        style={{ margin: 0 }}
+                        selected={isLiked}
+                        onPress={() => {}}
+                      />
                     </View>
                     <Image
                       source={require('../../assets/image/demo.jpg')}
@@ -99,7 +108,6 @@ const HomeScreen = () => {
         <CustomBottomSheet
           bottomSheetRef={bottomSheetRef}
           postComments={postComments}
-          currentPost={currentPost}
           sendComment={sendComment}
           text={text}
           setText={setText}
@@ -118,14 +126,19 @@ const styles = StyleSheet.create({
   headerContainer: {
     display: 'flex',
     flexDirection: 'row',
+    justifyContent: 'space-between',
     paddingVertical: 15,
     paddingHorizontal: 5,
-    gap: 13,
     alignItems: 'center',
   },
   smallImage: {
     width: 40,
     height: 40,
     borderRadius: 50,
+  },
+  headerUserInfo: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 13,
   },
 });

@@ -11,7 +11,6 @@ import { CustomBottomSheetParams } from '../../infrastructure/interfaces/homeScr
 const CustomBottomSheet = ({
   bottomSheetRef,
   postComments,
-  currentPost,
   sendComment,
   text,
   setText,
@@ -31,7 +30,7 @@ const CustomBottomSheet = ({
       <BottomSheetView style={styles.contentContainer}>
         <View style={styles.inputContainer}>
           <Image
-            source={require('../../assets/image/userImage.png')}
+            source={require('../../assets/image/fabian.jpeg')}
             //   source={{ uri: item.image }}
             style={styles.smallImage}
             resizeMode="cover"
@@ -49,13 +48,13 @@ const CustomBottomSheet = ({
         {postComments.map((comment, index) => (
           <View key={index} style={styles.commentContainer}>
             <Image
-              source={require('../../assets/image/userImage.png')}
+              source={require('../../assets/image/fabian.jpeg')}
               //   source={{ uri: item.image }}
               style={styles.smallImage}
               resizeMode="cover"
             />
             <View>
-              <Text variant="labelLarge">{currentPost?.name}</Text>
+              <Text variant="labelLarge">Fabian Meneses</Text>
               <Text>{comment.comment}</Text>
               <Text>Reply</Text>
             </View>
