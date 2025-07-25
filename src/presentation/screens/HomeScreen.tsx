@@ -1,27 +1,31 @@
 /* eslint-disable react-native/no-inline-styles */
-import {
-  FlatList,
-  Image,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { FlatList, Image, SafeAreaView, StyleSheet, View } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import moment from 'moment';
 
 import { getUserData } from '../../actions/api/getData';
-import { IconButton } from 'react-native-paper';
+import { IconButton, Text } from 'react-native-paper';
+import 'moment/locale/es';
 
 const STORAGE_KEY = 'USER_ACTIONS';
 type Actions = {
   liked: string[];
   saved: string[];
+  likes: { id: string; likes: number }[];
 };
 
+export function formatLikesLocale(count: number): string {
+  return count.toLocaleString('es-CO');
+}
+
 const HomeScreen = () => {
-  const [actions, setActions] = useState<Actions>({ liked: [], saved: [] });
+  const [actions, setActions] = useState<Actions>({
+    liked: [],
+    saved: [],
+    likes: [],
+  });
 
   useEffect(() => {
     AsyncStorage.getItem(STORAGE_KEY)
@@ -53,21 +57,35 @@ const HomeScreen = () => {
 
       const savedFromServer = data.filter(u => u.saved).map(u => u.id);
 
+      const likesFromServer = data.map(u => {
+        return { id: u.id, likes: u.likes };
+      });
+
       setActions({
         liked: likedFromServer,
         saved: savedFromServer,
+        likes: likesFromServer,
       });
     }
   }, [data, actions]);
 
   const toggleLike = (id: string) => {
     setActions(prev => {
-      const liked = new Set(prev.liked);
+      const isAdding = !prev.liked.includes(id);
+      const sumOrRest = isAdding ? 1 : -1;
+      const newLiked = isAdding
+        ? [...prev.liked, id]
+        : prev.liked.filter(item => item !== id);
 
-      const adding = !liked.has(id);
-      if (adding) liked.add(id);
-      else liked.delete(id);
-      return { ...prev, liked: Array.from(liked) };
+      const newLikes = prev.likes.map(res =>
+        res.id === id ? { ...res, likes: res.likes + sumOrRest } : res,
+      );
+
+      return {
+        ...prev,
+        liked: newLiked,
+        likes: newLikes,
+      };
     });
   };
   const toggleSave = (id: string) => {
@@ -89,6 +107,8 @@ const HomeScreen = () => {
             renderItem={({ item }) => {
               const isLiked = actions.liked.includes(item.id);
               const isSaved = actions.saved.includes(item.id);
+              const likes =
+                actions.likes.find(res => res.id === item.id)?.likes ?? 0;
               return (
                 <View key={item.id} style={{ margin: 10 }}>
                   <View
@@ -97,11 +117,20 @@ const HomeScreen = () => {
                       flexDirection: 'row',
                       paddingVertical: 15,
                       paddingHorizontal: 5,
-                      gap: 5,
+                      gap: 13,
+                      alignItems: 'center',
                     }}
                   >
-                    <Text>foto</Text>
-                    <Text>{item.name}</Text>
+                    <Image
+                      source={require('../../assets/image/userImage.png')}
+                      //   source={{ uri: item.image }}
+                      style={{ width: 40, height: 40, borderRadius: 50 }}
+                      resizeMode="cover"
+                    />
+                    <View>
+                      <Text variant="labelLarge">{item.name}</Text>
+                      <Text>{item.location}</Text>
+                    </View>
                   </View>
                   <Image
                     source={require('../../assets/image/demo.jpg')}
@@ -115,7 +144,7 @@ const HomeScreen = () => {
                         display: 'flex',
                         flexDirection: 'row',
                         justifyContent: 'space-between',
-                        paddingHorizontal: 5,
+                        // paddingHorizontal: 5,
                       }}
                     >
                       <View
@@ -158,14 +187,15 @@ const HomeScreen = () => {
                         onPress={() => toggleSave(item.id)}
                       />
                     </View>
-
-                    <View
-                      style={{ paddingHorizontal: 5, marginTop: 5, gap: 5 }}
-                    >
-                      <Text>
-                        {item.name} {item.description}
+                    <Text style={{ paddingHorizontal: 5 }}>
+                      {formatLikesLocale(likes)} Me gusta
+                    </Text>
+                    <View style={{ paddingHorizontal: 5, marginTop: 5 }}>
+                      <Text variant="labelLarge">
+                        {item.name} <Text>{item.description}</Text>
                       </Text>
-                      <Text>hace {String(item.createdAt)}</Text>
+                      <Text>{formatLikesLocale(item.comments)} respuestas</Text>
+                      <Text>{moment(item.createdAt).fromNow()}</Text>
                     </View>
                   </View>
                 </View>
