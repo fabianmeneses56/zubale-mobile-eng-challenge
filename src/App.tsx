@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler';
 
-import { StatusBar, useColorScheme } from 'react-native';
+import { StatusBar, StyleSheet, useColorScheme } from 'react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
@@ -19,7 +19,7 @@ function App() {
       <NavigationContainer>
         <PaperProvider>
           <SafeAreaProvider>
-            <SafeAreaView style={{ flex: 1 }}>
+            <SafeAreaView style={styles.container}>
               <BottomTabNavigation />
             </SafeAreaView>
           </SafeAreaProvider>
@@ -29,4 +29,9 @@ function App() {
   );
 }
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
 export default App;
